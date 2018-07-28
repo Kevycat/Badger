@@ -1,28 +1,42 @@
 package com.bdgrsoft.badgerlang;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TextEditor {
 
-	private String[] lines;
+	private List<String> lines;
+	public int line = -1;
 	public static final int lineHeight = 20;
+	public static final int textOffset = 5;
 
 	public TextEditor(int numLines) {
-		lines = new String[numLines];
+		lines = new ArrayList<String>();
 		for (int i = 0; i < numLines; i++) {
-			lines[i] = "";
+			lines.add("");
 		}
+	}
+	
+	private String[] getLines(int length) {
+		while(length >= lines.size())
+			lines.add("");
+		String[] stringLines = new String[lines.size()];
+		for(int i = 0; i < lines.size(); i++)
+			stringLines[i] = lines.get(i);
+		return stringLines;
 	}
 
 	public String[] getLines() {
-		return lines;
+		return (String[]) lines.toArray();
 	}
 
 	public String getLine(int i) {
-		return lines[i];
+		return getLines(i)[i];
 	}
 
 	public char getChar(int line, int character) {
 		char[] chars = new char[1];
-		lines[line].getChars(character, character, chars, 0);
+		getLines(line)[line].getChars(character, character, chars, 0);
 		return chars[0];
 	}
 

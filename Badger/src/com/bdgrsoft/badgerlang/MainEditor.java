@@ -1,9 +1,12 @@
 package com.bdgrsoft.badgerlang;
 
+import java.awt.AWTEvent;
 import java.awt.Canvas;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.AWTEventListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -67,6 +70,15 @@ public class MainEditor extends Canvas implements Runnable {
 		});
 
 		textEditor = new TextEditor(frame.getHeight() / TextEditor.lineHeight);
+		frame.getToolkit().addAWTEventListener(new AWTEventListener() {
+
+			@Override
+			public void eventDispatched(AWTEvent event) {
+				MouseEvent mEvent = (MouseEvent) event;
+				if(mEvent.getID() == MouseEvent.MOUSE_RELEASED)
+					textEditor.line = mEvent.getY() / TextEditor.lineHeight;
+			}
+		}, AWTEvent.MOUSE_EVENT_MASK);
 
 		frame.setVisible(true);
 		this.createBufferStrategy(3);
@@ -82,7 +94,7 @@ public class MainEditor extends Canvas implements Runnable {
 			e1.printStackTrace();
 		}
 	}
-	
+
 	public void Cursor(Cursor cursor) {
 		setCursor(cursor);
 	}
