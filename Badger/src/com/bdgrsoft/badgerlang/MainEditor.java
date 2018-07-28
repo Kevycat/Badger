@@ -1,6 +1,7 @@
 package com.bdgrsoft.badgerlang;
 
 import java.awt.Canvas;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.WindowAdapter;
@@ -14,7 +15,7 @@ import javax.swing.JOptionPane;
 public class MainEditor extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	Thread thread;
 	JFrame frame;
 	TextEditor textEditor;
@@ -62,15 +63,14 @@ public class MainEditor extends Canvas implements Runnable {
 				if (close) {
 					running = false;
 				}
-
 			}
 		});
-		
+
 		textEditor = new TextEditor(frame.getHeight() / TextEditor.lineHeight);
-		
+
 		frame.setVisible(true);
 		this.createBufferStrategy(3);
-		
+
 		while (running)
 			render();
 
@@ -81,6 +81,10 @@ public class MainEditor extends Canvas implements Runnable {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public void Cursor(Cursor cursor) {
+		setCursor(cursor);
 	}
 
 }
