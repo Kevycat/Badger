@@ -13,8 +13,11 @@ import javax.swing.JOptionPane;
 
 public class MainEditor extends Canvas implements Runnable {
 
+	private static final long serialVersionUID = 1L;
+	
 	Thread thread;
 	JFrame frame;
+	TextEditor textEditor;
 
 	boolean running = false;
 
@@ -30,7 +33,7 @@ public class MainEditor extends Canvas implements Runnable {
 			return;
 		}
 		Graphics g = bs.getDrawGraphics();
-		EditorGraphics.paint(g, frame.getSize());
+		EditorGraphics.paint(g, textEditor, frame.getSize());
 		g.dispose();
 		bs.show();
 	}
@@ -62,9 +65,12 @@ public class MainEditor extends Canvas implements Runnable {
 
 			}
 		});
+		
+		textEditor = new TextEditor(frame.getHeight() / TextEditor.lineHeight);
+		
 		frame.setVisible(true);
 		this.createBufferStrategy(3);
-
+		
 		while (running)
 			render();
 
