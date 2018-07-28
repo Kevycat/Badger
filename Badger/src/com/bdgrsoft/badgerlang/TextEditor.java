@@ -8,7 +8,7 @@ public class TextEditor {
 	private List<String> lines;
 	public int line = -1;
 	public static final int lineHeight = 20;
-	public static final int textOffset = 5;
+	public static final int textOffset = 18;
 
 	public TextEditor(int numLines) {
 		lines = new ArrayList<String>();

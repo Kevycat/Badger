@@ -15,17 +15,21 @@ public class EditorGraphics {
 
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, d.width, d.height);
-		g.setFont(Font.getFont("monospaced"));
+		g.setColor(Color.BLACK);
+		g.fillRect(TextEditor.textOffset - 2, 0, 1, d.height);
 		
+		g.setFont(Font.getFont("Courier New"));
 		for (int i = 0; i < d.height / TextEditor.lineHeight && i * TextEditor.lineHeight < d.height; i++) {
 			g.setColor(Color.GRAY);
 			g.fillRect(0, i * TextEditor.lineHeight, d.width, 1);
 
 			byte[] line = text.getLine(i).getBytes();
+			byte[] lineNumber = ("" + i).getBytes();
 			g.setColor(Color.black);
-			g.drawBytes(line, 0, line.length, TextEditor.textOffset, i * TextEditor.lineHeight);
+			g.drawBytes(line, 0, line.length, TextEditor.textOffset + 5, i * TextEditor.lineHeight);
+			g.drawBytes(lineNumber, 0, lineNumber.length, 1, i * TextEditor.lineHeight);
 		}
-		g.fillRect(1, text.line * TextEditor.lineHeight, 2, 20);
+		g.fillRect(1 + TextEditor.textOffset, text.line * TextEditor.lineHeight, 2, 20);
 	}
 
 }
