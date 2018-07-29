@@ -1,19 +1,16 @@
 package com.bdgrsoft.badgerlang;
 
-import java.awt.AWTEvent;
+import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.AWTEventListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferStrategy;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextPane;
 
 public class MainEditor extends Canvas implements Runnable {
 
@@ -21,7 +18,6 @@ public class MainEditor extends Canvas implements Runnable {
 
 	Thread thread;
 	JFrame frame;
-	TextEditor textEditor;
 
 	boolean running = false;
 
@@ -31,15 +27,7 @@ public class MainEditor extends Canvas implements Runnable {
 	}
 
 	private void render() {
-		BufferStrategy bs = this.getBufferStrategy();
-		if (bs == null) {
-			this.createBufferStrategy(3);
-			return;
-		}
-		Graphics g = bs.getDrawGraphics();
-		EditorGraphics.paint(g, textEditor, frame.getSize());
-		g.dispose();
-		bs.show();
+		//render buttons, etc...
 	}
 
 	@Override
@@ -52,7 +40,7 @@ public class MainEditor extends Canvas implements Runnable {
 		frame.setPreferredSize(new Dimension(1080, 720));
 		frame.setIconImage(new ImageIcon("Res/Icon.png").getImage());
 
-		frame.add(this);
+		frame.getContentPane().add(new JTextPane(), BorderLayout.CENTER);
 		frame.pack();
 
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -69,19 +57,7 @@ public class MainEditor extends Canvas implements Runnable {
 			}
 		});
 
-		textEditor = new TextEditor(frame.getHeight() / TextEditor.lineHeight);
-		frame.getToolkit().addAWTEventListener(new AWTEventListener() {
-
-			@Override
-			public void eventDispatched(AWTEvent event) {
-				MouseEvent mEvent = (MouseEvent) event;
-				if(mEvent.getID() == MouseEvent.MOUSE_RELEASED)
-					textEditor.line = mEvent.getY() / TextEditor.lineHeight;
-			}
-		}, AWTEvent.MOUSE_EVENT_MASK);
-
 		frame.setVisible(true);
-		this.createBufferStrategy(3);
 
 		while (running)
 			render();
