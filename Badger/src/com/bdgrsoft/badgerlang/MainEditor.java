@@ -6,6 +6,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -31,6 +33,7 @@ public class MainEditor extends Canvas implements Runnable {
 	private Thread thread;
 	private JFrame frame;
 	private JTextPane pane;
+	private ImageIcon icon;
 	private File file = null;
 
 	boolean running = false;
@@ -43,12 +46,13 @@ public class MainEditor extends Canvas implements Runnable {
 	@Override
 	public void run() {
 		running = true;
-
+		icon = new ImageIcon("Res/Icon.png");
+		
 		frame = new JFrame("Untitled | Badgerlang editor");
 		frame.setLocationRelativeTo(null);
 		frame.setMinimumSize(new Dimension(300, 200));
 		frame.setPreferredSize(new Dimension(1080, 720));
-		frame.setIconImage(new ImageIcon("Res/Icon.png").getImage());
+		frame.setIconImage(icon.getImage());
 		frame.getContentPane().add(buildGUI(new JPanel(new GridBagLayout())), 0);
 		frame.pack();
 
@@ -61,8 +65,7 @@ public class MainEditor extends Canvas implements Runnable {
 					fileName = file.getName();
 
 				int save = JOptionPane.showConfirmDialog(frame, "Save file " + fileName + "?", "Save",
-						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
+						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
 				if (save == JOptionPane.YES_OPTION) {
 					save();
 					running = false;
