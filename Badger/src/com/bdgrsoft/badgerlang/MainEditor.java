@@ -89,13 +89,16 @@ public class MainEditor extends Canvas implements Runnable {
 	}
 
 	private void saveAs() {
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser() {
+			@Override
+			public void approveSelection() {
+				if (file == null)
+					return;
+				file = this.getSelectedFile();
+				save();
+			}
+		};
 		chooser.showOpenDialog(frame);
-
-		file = chooser.getSelectedFile();
-		if (file == null)
-			return;
-		save();
 		return;
 	}
 
@@ -137,6 +140,10 @@ public class MainEditor extends Canvas implements Runnable {
 			}
 		}
 	}
+	
+	private void open() {
+		
+	}
 
 	private JPanel buildGUI(JPanel panel) {
 		GridBagConstraints textConstraints = new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.LINE_START,
@@ -149,7 +156,7 @@ public class MainEditor extends Canvas implements Runnable {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
 		JButton saveButtonComponent = new JButton("Save");
 		saveButtonComponent.setBackground(new Color(240, 240, 240));
-		panel.add(saveButtonComponent, saveButtonConstraints, 0);
+		panel.add(saveButtonComponent, saveButtonConstraints, 1);
 		saveButtonComponent.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -161,13 +168,26 @@ public class MainEditor extends Canvas implements Runnable {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
 		JButton saveAsButtonComponent = new JButton("Save As");
 		saveAsButtonComponent.setBackground(new Color(240, 240, 240));
+		panel.add(saveAsButtonComponent, saveAsButtonConstraints, 1);
 		saveAsButtonComponent.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				saveAs();
 			}
 		});
-		panel.add(saveAsButtonComponent, saveAsButtonConstraints, 0);
+		
+		//set VERTICAL to BOTH when new button is added
+		GridBagConstraints openButtonConstraints = new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0);
+		JButton openButtonComponent = new JButton("Open");
+		openButtonComponent.setBackground(new Color(240, 240, 240));
+		//panel.add(openButtonComponent, openButtonConstraints, 2);
+		openButtonComponent.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				open();
+			}
+		});
 		pane = textComponent;
 		return panel;
 	}
