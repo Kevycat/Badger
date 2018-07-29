@@ -44,7 +44,7 @@ public class MainEditor extends Canvas implements Runnable {
 	public void run() {
 		running = true;
 
-		frame = new JFrame("Badgerlang editor");
+		frame = new JFrame("Untitled | Badgerlang editor");
 		frame.setLocationRelativeTo(null);
 		frame.setMinimumSize(new Dimension(300, 200));
 		frame.setPreferredSize(new Dimension(1080, 720));
@@ -95,12 +95,19 @@ public class MainEditor extends Canvas implements Runnable {
 		file = chooser.getSelectedFile();
 		if (file == null)
 			return;
+		save();
 		return;
 	}
 
 	private void save() {
+		String fileName = "Untitled";
+		if (file != null)
+			fileName = file.getName();
+		frame.setTitle(fileName + " | Badgerlang editor");
+		
 		if (file == null)
 			saveAs();
+		
 		else {
 			if (!file.exists()) {
 				try {
@@ -119,6 +126,12 @@ public class MainEditor extends Canvas implements Runnable {
 
 			try {
 				output.write(pane.getText().getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				output.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
