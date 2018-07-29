@@ -40,7 +40,7 @@ public class MainEditor extends Canvas implements Runnable {
 		frame.setPreferredSize(new Dimension(1080, 720));
 		frame.setIconImage(new ImageIcon("Res/Icon.png").getImage());
 
-		frame.getContentPane().add(new JTextPane(), BorderLayout.CENTER);
+		frame.getContentPane().add(new JTextPane(), BorderLayout.CENTER, 0);
 		frame.pack();
 
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -53,6 +53,8 @@ public class MainEditor extends Canvas implements Runnable {
 
 				if (close) {
 					running = false;
+					frame.remove(0);
+					frame.dispose();
 				}
 			}
 		});
@@ -61,8 +63,6 @@ public class MainEditor extends Canvas implements Runnable {
 
 		while (running)
 			render();
-
-		frame.dispose();
 
 		try {
 			thread.join();
