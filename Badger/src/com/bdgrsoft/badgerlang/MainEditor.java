@@ -1,33 +1,43 @@
 package com.bdgrsoft.badgerlang;
 
-import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
 public class MainEditor extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
-	Thread thread;
-	JFrame frame;
+	private Thread thread;
+	private JFrame frame;
+	private JTextPane pane;
+	private File file = null;
 
 	boolean running = false;
 
 	public MainEditor() {
 		thread = new Thread(this, "Editor Graphics");
 		thread.start();
-	}
-
-	private void render() {
-		//render buttons, etc...
 	}
 
 	@Override
@@ -39,19 +49,26 @@ public class MainEditor extends Canvas implements Runnable {
 		frame.setMinimumSize(new Dimension(300, 200));
 		frame.setPreferredSize(new Dimension(1080, 720));
 		frame.setIconImage(new ImageIcon("Res/Icon.png").getImage());
-
-		frame.getContentPane().add(new JTextPane(), BorderLayout.CENTER, 0);
+		frame.getContentPane().add(buildGUI(new JPanel(new GridBagLayout())), 0);
 		frame.pack();
 
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				boolean close = JOptionPane.showConfirmDialog(frame, "Are you sure you want to close this window?",
-						"Close confirmation", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION;
+				String fileName = "Untitled";
+				if (file != null)
+					fileName = file.getName();
 
-				if (close) {
+				int save = JOptionPane.showConfirmDialog(frame, "Save file " + fileName + "?", "Save",
+						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+				if (save == JOptionPane.YES_OPTION) {
+					save();
+					running = false;
+					frame.remove(0);
+					frame.dispose();
+				} else if (save == JOptionPane.NO_OPTION) {
 					running = false;
 					frame.remove(0);
 					frame.dispose();
@@ -69,6 +86,81 @@ public class MainEditor extends Canvas implements Runnable {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+	}
+
+	private void saveAs() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.showOpenDialog(frame);
+
+		file = chooser.getSelectedFile();
+		if (file == null)
+			return;
+		return;
+	}
+
+	private void save() {
+		if (file == null)
+			saveAs();
+		else {
+			if (!file.exists()) {
+				try {
+					file.createNewFile();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			FileOutputStream output = null;
+			try {
+				output = new FileOutputStream(file);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+
+			try {
+				output.write(pane.getText().getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private JPanel buildGUI(JPanel panel) {
+		GridBagConstraints textConstraints = new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.LINE_START,
+				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
+		JTextPane textComponent = new JTextPane();
+		textComponent.setAutoscrolls(true);
+		panel.add(textComponent, textConstraints, 0);
+
+		GridBagConstraints saveButtonConstraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
+		JButton saveButtonComponent = new JButton("Save");
+		saveButtonComponent.setBackground(new Color(240, 240, 240));
+		panel.add(saveButtonComponent, saveButtonConstraints, 0);
+		saveButtonComponent.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				save();
+			}
+		});
+
+		GridBagConstraints saveAsButtonConstraints = new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
+		JButton saveAsButtonComponent = new JButton("Save As");
+		saveAsButtonComponent.setBackground(new Color(240, 240, 240));
+		saveAsButtonComponent.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				saveAs();
+			}
+		});
+		panel.add(saveAsButtonComponent, saveAsButtonConstraints, 0);
+		pane = textComponent;
+		return panel;
+	}
+
+	private void render() {
+		// render buttons, etc...
 	}
 
 	public void Cursor(Cursor cursor) {
