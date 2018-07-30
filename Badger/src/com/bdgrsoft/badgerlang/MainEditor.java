@@ -67,11 +67,12 @@ public class MainEditor extends Canvas implements Runnable {
 				int save = JOptionPane.showConfirmDialog(frame, "Save file " + fileName + "?", "Save",
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
 				if (save == JOptionPane.YES_OPTION) {
-					save();
-					running = false;
-					frame.remove(0);
-					frame.dispose();
-					System.exit(0);
+					if(save()) {
+						running = false;
+						frame.remove(0);
+						frame.dispose();
+						System.exit(0);
+					}
 				} else if (save == JOptionPane.NO_OPTION) {
 					running = false;
 					frame.remove(0);
@@ -94,27 +95,27 @@ public class MainEditor extends Canvas implements Runnable {
 		System.exit(0);
 	}
 
-	private void saveAs() {
+	private boolean saveAs() {
 		JFileChooser chooser = new JFileChooser();
 		int option = chooser.showOpenDialog(frame);
 		if(option == JFileChooser.APPROVE_OPTION) {
 			file = chooser.getSelectedFile();
 			if (file == null)
-				return;
+				return false;
 			save();
+			return true;
 		}
-		return;
+		return false;
 	}
 
-	private void save() {
+	private boolean save() {
 		String fileName = "Untitled";
 		if (file != null)
 			fileName = file.getName();
 		frame.setTitle(fileName + " | Badgerlang editor");
 		
 		if (file == null)
-			saveAs();
-		
+			return saveAs();
 		else {
 			if (!file.exists()) {
 				try {
@@ -142,6 +143,7 @@ public class MainEditor extends Canvas implements Runnable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			return true;
 		}
 	}
 	
