@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import javax.xml.soap.Text;
 
 public class MainEditor extends Canvas implements Runnable {
 
@@ -71,10 +73,12 @@ public class MainEditor extends Canvas implements Runnable {
 					running = false;
 					frame.remove(0);
 					frame.dispose();
+					System.exit(0);
 				} else if (save == JOptionPane.NO_OPTION) {
 					running = false;
 					frame.remove(0);
 					frame.dispose();
+					System.exit(0);
 				}
 			}
 		});
@@ -89,19 +93,18 @@ public class MainEditor extends Canvas implements Runnable {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+		System.exit(0);
 	}
 
 	private void saveAs() {
-		JFileChooser chooser = new JFileChooser() {
-			@Override
-			public void approveSelection() {
-				if (file == null)
-					return;
-				file = this.getSelectedFile();
-				save();
-			}
-		};
-		chooser.showOpenDialog(frame);
+		JFileChooser chooser = new JFileChooser();
+		int option = chooser.showOpenDialog(frame);
+		if(option == JFileChooser.APPROVE_OPTION) {
+			file = chooser.getSelectedFile();
+			if (file == null)
+				return;
+			save();
+		}
 		return;
 	}
 
@@ -145,7 +148,34 @@ public class MainEditor extends Canvas implements Runnable {
 	}
 	
 	private void open() {
-		
+		JFileChooser chooser = new JFileChooser();
+		int option = chooser.showOpenDialog(frame);
+		if(option == JFileChooser.APPROVE_OPTION) {
+			if (file == null)
+				return;
+			
+			file = chooser.getSelectedFile();
+			
+			FileInputStream stream = null;
+			
+			try {
+				stream = new FileInputStream(file);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+			byte[] bytes = new byte[(int) file.length()];
+			try {
+				stream.read(bytes);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			String data = "";
+			for(Byte b: bytes)
+				data += b;
+			pane.setText(data);
+		}
 	}
 
 	private JPanel buildGUI(JPanel panel) {
@@ -184,7 +214,7 @@ public class MainEditor extends Canvas implements Runnable {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0);
 		JButton openButtonComponent = new JButton("Open");
 		openButtonComponent.setBackground(new Color(240, 240, 240));
-		//panel.add(openButtonComponent, openButtonConstraints, 2);
+		panel.add(openButtonComponent, openButtonConstraints, 2);
 		openButtonComponent.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
