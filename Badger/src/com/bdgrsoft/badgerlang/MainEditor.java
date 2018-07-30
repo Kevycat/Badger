@@ -6,7 +6,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,15 +17,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.xml.soap.Text;
 
 public class MainEditor extends Canvas implements Runnable {
 
@@ -182,8 +180,8 @@ public class MainEditor extends Canvas implements Runnable {
 		GridBagConstraints textConstraints = new GridBagConstraints(0, 1, 3, 1, 1.0, 1.0, GridBagConstraints.LINE_START,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
 		JTextPane textComponent = new JTextPane();
-		textComponent.setAutoscrolls(true);
-		panel.add(textComponent, textConstraints, 0);
+		JScrollPane textScrollComponent = new JScrollPane(textComponent);
+		panel.add(textScrollComponent, textConstraints, 0);
 
 		GridBagConstraints saveButtonConstraints = new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
